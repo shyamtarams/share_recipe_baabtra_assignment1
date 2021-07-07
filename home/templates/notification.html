@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ShareRecipe</title>
+    <link rel="icon" href="{% static 'image/fav.jpg'%}" type="image/gif" sizes="16x16">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        /* Set black background color, white text and some padding */
+        
+        footer {
+            background-color: #555;
+            color: white;
+            padding: 15px;
+        }
+        * Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Closable button inside the container tab */
+.closebtn {
+  float: right;
+  color: rgb(8, 8, 8);
+  font-size: 35px;
+  cursor: pointer;
+}
+
+.containerTab {
+  padding: 20px;
+  color: rgb(12, 12, 12);
+}
+    </style>
+    <script>
+        // function openTab(tabName) {
+        //   var i, x;
+        //   x = document.getElementsByClassName("containerTab");
+        //   for (i = 0; i < x.length; i++) {
+        //     x[i].style.display = "none";
+        //   }
+        //   document.getElementById(tabName).style.display = "block";
+        // }
+        // function closeTab(tabName){
+        //     console.log(tabName)
+        //     var i, x;
+        //   x = document.getElementsByClassName("containerTab");
+        //   for (i = 0; i < x.length; i++) {
+        //     x[i].style.display = "none";
+        //   }
+        //     document.getElementById(tabName).style.display = "";
+        // }
+        // function dismiss(el){
+                // el.parentNode.style.display='none';
+        //         document.getElementById(el).style.display = 'none';
+        //    };
+        function myFunction(e) {
+            console.log(e)
+            var x = document.getElementById(e);
+            console.log(x.style.display)
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+        </script>
+</head>
+
+<body>
+    {% include 'nav.html' %}
+
+    <div class="container text-center">
+        <div class="row">
+
+            <div class="col-sm-3 well">
+                <a href="/userprofile">
+                <div class="well">
+                    <div class="row">
+                        <div class="col-sm-3">
+                        <!-- <i class="fa fa-heart" style="font-size:25px;color:rgb(250, 20, 20)"></i>20 -->
+                        </div>
+                        <div class="col-sm-6">
+                        <img src="{{user.user_image.url}}" class="img-circle" height="65" width="65" alt="Avatar">
+                        <h5>{{user.username}}</h5>
+                        </div>
+                        <div class="col-sm-3">
+                        <!-- <i class="fa fa-commenting" style="font-size:28px;color:rgb(252, 51, 16)"></i>20 -->
+                        </div>
+                    </div>
+                    <!-- <p><a href="#">{{user.username}}</a></p> -->
+                </div>
+                </a>
+
+                <!-- <div class="well">
+                    <p><a href="#">Interests</a></p>
+                    <p>
+                        <span class="label label-default">News</span>
+                        <span class="label label-primary">W3Schools</span>
+                        <span class="label label-success">Labels</span>
+                        <span class="label label-info">Football</span>
+                        <span class="label label-warning">Gaming</span>
+                        <span class="label label-danger">Friends</span>
+                    </p>
+                </div> -->
+                <a href="/recipe">
+                <div class="well">
+                    <p>HOME</p>
+                </div></a>
+                <a href="/postrecipe">
+                <div class="well">
+                    <p>CREATE POST</p>
+                </div></a>
+                <a href="/notification">
+                <div class="well">
+                    <p>NOTI
+                        FICATION</p>
+                </div></a>
+                <a href="/updateprofile">
+                <div class="well">
+                    <p>UPDATE PROFILE</p>
+                </div></a>
+                <!-- <div class="well">
+                    <p>TENDING</p>
+                </div> -->
+
+                <!-- <div class="alert alert-success fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p><strong>Ey!</strong></p>
+                    People are looking at your profile. Find out who.
+                </div>
+                <div class="alert alert-success fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p><strong>Ey!</strong></p>
+                    People are looking at your profile. Find out who.
+                </div>
+                <div class="alert alert-success fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p><strong>Ey!</strong></p>
+                    People are looking at your profile. Find out who.
+                </div>
+                <p><a href="#">More</a></p> -->
+                <!-- <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p> -->
+            </div>
+            <div class="col-sm-7">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default text-left">
+                            
+                            <!-- <div class="panel-body">
+                            <div class="drop-cate" >
+                                <div class="form-group"> -->
+                                    
+                                <!-- <select name="cat" id=""  class="form-control">
+                                    {% for cat in cat %}
+                                    <option name="cat" value="{{cat.name}}" class="form-control" >{{cat.name}}</option>
+                                    {% endfor %}
+                                </select> -->
+                               <!-- </div>
+
+                                   
+                            </div>
+                            
+                            </div> -->
+
+                        </div>
+                    </div>
+                </div>
+               
+
+                    {% for cmt in ncmt %}
+                        <div class="row" >
+                            <div class="col-sm-12">
+                                <div class="alert alert-success fade in">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                                    <p><strong>{{ cmt.user.username }}</strong></p>
+                                   commented on your post {{cmt.comment}}
+                                </div>
+                           </div>   
+                        </div>
+                    {% endfor%}
+                    
+                    {% for lk in nlk %}
+                    <div class="row" >
+                        <div class="col-sm-12">
+                            <div class="alert alert-success fade in">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                                <p><strong>{{ lk.user.username }}</strong></p>
+                                liked your post {{ lk.post.name}}
+                            </div>
+                       </div>   
+                    </div>
+                {% endfor%}
+                
+            </div>
+            
+            {% if trend %}
+            <div class="col-sm-2 well">
+                <div class="thumbnail">
+                    <p>Trending</p>
+                    <img src="{{ trend.post_image.url}}" alt="Paris" width="400" height="300">
+                    <p><strong>{{ trend.name}}</strong></p>
+                    <!-- <p>Fri. 27 November 2015</p> -->
+                    <a href="/interactions/{{ trend.id}}"<button class="btn btn-primary">View</button></a>
+                </div>
+                <div class="thumbnail">
+                    <p>Most likes</p>
+                    <img src="{{ tlk.post_image.url}}" alt="Paris" width="400" height="300">
+                    <p><strong>{{ tlk.name}}</strong></p>
+                    <!-- <p>Fri. 27 November 2015</p> -->
+                    <a href="/interactions/{{ trend.id}}"<button class="btn btn-primary">View</button></a>
+                </div>
+                 <!-- <div class="well">
+                    <p>NEW POST</p>
+                </div> -->
+                <!-- <div class="well">
+                    <p>TENDING</p>
+                </div> -->
+                <div class="well">
+                    <p>TOP 10 POST</p>
+                </div>
+               
+                <div class="well">
+                    <p>YOUR CIRCLE</p>
+                </div>
+            </div>
+            {% else%}
+            <div class="col-sm-2 well">
+                <div class="thumbnail">
+                    <p>Trending</p>
+                    <img src="" alt="no posts" width="400" height="300">
+                    <p><strong>no posts</strong></p>
+                    <!-- <p>Fri. 27 November 2015</p> -->
+                    <a href="/recipe"<button class="btn btn-primary">create recipe</button></a>
+                </div>
+                <div class="thumbnail">
+                    <p>Most likes</p>
+                    <img src="" alt="no posts" width="400" height="300">
+                    <p><strong>no posts</strong></p>
+                    <!-- <p>Fri. 27 November 2015</p> -->
+                    <a href="/recipe"<button class="btn btn-primary">create recipe</button></a>
+                </div>
+                 <!-- <div class="well">
+                    <p>NEW POST</p>
+                </div> -->
+                <!-- <div class="well">
+                    <p>TENDING</p>
+                </div> -->
+                <div class="well">
+                    <p>TOP 10 POST</p>
+                </div>
+               
+                <div class="well">
+                    <p>YOUR CIRCLE</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer class="container-fluid text-center">
+        <p>Footer Text</p>
+    </footer>
+
+</body>
+
+</html>

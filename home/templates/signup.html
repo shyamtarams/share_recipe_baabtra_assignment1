@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ShareRecipe</title>
+    <link rel="icon" href="{% static 'image/fav.jpg'%}" type="image/gif" sizes="16x16">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        main {
+            min-height: 100vh;
+            /* background: linear-gradient(to right top, #65dfc9, rgb(153, 231, 245)); */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .glass {
+            display: flex;
+            min-height: 30vh;
+            width: 30%;
+            /* height: 600px;
+            width: 1200px; */
+            /* padding: 1px 1px 1px 1px; */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            /* text-align: center; */
+            backdrop-filter: blur(0.3rem);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+        
+        body {
+            align-items: center;
+            background: linear-gradient(to left, #fcfbfa, #fdfdfd);
+        }
+        
+        .ibox {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 10px 10px 10px;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+            $('#confirm_password').on('keyup', function() {
+                if ($('#password').val() == $('#confirm_password').val()) {
+                    $('#message').html('').css('color', 'green');
+                    $(':input[type="submit"]').prop('disabled', false);
+                } else
+                    $(':input[type="submit"]').prop('disabled', true),
+                    $('#message').html('Not Matching passwords').css('color', 'red');
+            });
+        });
+
+        $(document).ready(function() {
+            $('#password').blur(function() {
+                if ($('#password').val().length < 5) {
+                    console.log("paas")
+                    $(':input[type="submit"]').prop('disabled', true)
+                    $('#msg_pass').html('password must be more than 5 characters').css('color', 'red')
+                } else if ($('#password').val().length > 10) {
+                    console.log("no")
+                    $(':input[type="submit"]').prop('disabled', true)
+                    $('#msg_pass').html('password must be less than 10 characters').css('color', 'red')
+                } else {
+                    $(':input[type="submit"]').prop('disabled', false)
+                    $('#msg_pass').html('paasword must be in 5-10').css('color', 'black')
+                }
+            });
+        });
+
+        // username check
+        $(function() {
+            $('#username').blur(function() {
+                username = $('#username').val()
+                console.log(username)
+                $.ajax({
+                    url: 'checkuser',
+                    type: 'get',
+                    data: {
+                        'username': username,
+                    },
+                    success: function(response) {
+                        if (response.exists) {
+                            $(':input[type="submit"]').prop('disabled', true)
+                            $(':input[type="email"]').prop('disabled', true)
+                            $('#msg_username').html('username already exists').css('color', 'red')
+                        } else {
+                            $(':input[type="submit"]').prop('disabled', false)
+                            $(':input[type="email"]').prop('disabled', false)
+                            $('#msg_username').html('')
+                        }
+                        console.log(response.exists)
+                    }
+                })
+
+            })
+        });
+        // check email
+        $(function() {
+            $('#email').blur(function() {
+                email = $('#email').val()
+                console.log(email)
+                $.ajax({
+                    url: 'checkuser',
+                    type: 'get',
+                    data: {
+                        'email': email,
+                    },
+                    success: function(response) {
+                        if (response.exists) {
+                            $(':input[type="file"]').prop('disabled', true)
+                            $(':input[type="submit"]').prop('disabled', true)
+                            $('#msg_email').html('This email already have an account').css('color', 'red')
+                        } else {
+                            $(':input[type="file"]').prop('disabled', false)
+                            $(':input[type="submit"]').prop('disabled', false)
+                            $('#msg_email').html('')
+                        }
+                        console.log(response.exists)
+                    }
+                })
+
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <main>
+
+        <div class="glass">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="ibox">
+                    <center>
+                        <h2>SignUp</h2><br>
+                    </center>
+                    <input type="text" class="form-control input-sm" name="username" id="username" placeholder="username" required><br>
+                    <label for="" id="msg_username"></label>
+                    <input type="email" class="form-control input-sm" name="email" id="email" placeholder="email" required><br>
+                    <label for="" id="msg_email"></label>
+                    <input type="file" class="form-control input-sm" name="pro_pic" id="pro_pic" placeholder="profile picture"><br>
+                    <input type="password" class="form-control input-sm" name="password" id="password" placeholder="password" required>
+                    <label for="" id="msg_pass">paasword must be in 5-10</label><br>
+                    <input type="password" class="form-control input-sm" name="confirm_password" id="confirm_password" placeholder="confirm password" required><br>
+                    <label for="" id="message"></label>
+                    <button type="submit" class="btn btn-primary" id="btn">submit</button>
+                    <label for="" id="msg"></label><br>
+                    <p>already have an account? <a href="/login">login</a> </p>
+                </div>
+                <!-- <span id='message'></span> -->
+            </form>
+        </div>
+
+    </main>
+
+
+</body>
+
+</html>

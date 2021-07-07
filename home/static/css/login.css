@@ -1,0 +1,133 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    width: 50%;
+    display: grid;
+    height: 100%;
+    place-items: center;
+    background: white;
+}
+.container{
+    max-width: 390px;
+    width: 50%;
+    padding: 30px;
+    border-radius: 7px;
+    background: rgb(248, 248, 248);
+    box-shadow: 0px 15px 20px rgb(216, 216, 216);
+    overflow: hidden;
+}
+.container .title-text{
+    display: flex;
+    width: 200%;
+}
+.container .title-text .title  {
+    /* display: flex; */
+    width: 200%;
+    font-size: 35px;
+    font-weight: 300;
+    text-align: center;
+}
+.container .form-container{
+    width: 100%;
+    overflow: hidden;
+}
+.form-container .slide-cnt{
+    position: relative;
+    display: flex;
+    height: 50px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 5px;
+    margin: 30px 0 10px 0;
+    justify-content: space-between;
+    border: 1px solid lightgray;
+
+}
+.slide-cnt .slide{
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 48px;
+    cursor: pointer;
+}
+.slide-cnt .signup{
+    color: #000;
+}
+.slide-cnt .slide-tab{
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    left: 0;
+    z-index: 0;
+    border-radius: 5px;
+    background:  linear-gradient(to right,rgb(51, 51, 187),rgb(79, 133, 212),blue );
+
+}
+input[type=radio]{
+    display: none;
+}
+#signup:checked ~ .slide-tab{
+    left: 50%;
+}
+#signup:checked ~ .signup{
+    color: #fff;
+}
+#signup:checked ~ .login{
+    color: #000;
+}
+.form-container .inner{
+    display: flex;
+    width: 200%;
+}
+.form-container .inner form{
+      width: 50%;
+
+}
+.form-container .inner form .field{
+    height: 50px;
+    width: 100%;
+    margin-top: 20px;
+}
+.inner form .field input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    padding-left: 15px;
+    font-size: 17px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    border-bottom-width: 2px;
+}
+.inner form .field input:focus{
+    border-color:rgb(48, 80, 224);
+}
+.inner form .pass-link{
+    margin-top: 5px;
+}
+.inner form .signup-link{
+    text-align: center;
+    margin-top: 30px;
+}
+.inner form .pass-link a, .inner form .signup-link a{
+    color:blueviolet;
+    text-decoration: none;
+}
+.inner form .pass-link a:hover, .inner form .signup-link a:hover{
+    text-decoration: underline;
+}
+.field input[type="submit"]{
+   background: linear-gradient(to right,rgb(51, 51, 187),rgb(79, 133, 212),blue );;
+   color: white;
+   font-size: 20px;
+   font-weight: 500;
+   padding-left: 0px;
+   border: none;
+   cursor: pointer;
+}

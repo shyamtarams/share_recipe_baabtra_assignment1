@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ShareRecipe</title>
+    <link rel="icon" href="{% static 'image/fav.jpg'%}" type="image/gif" sizes="16x16">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <title>Recipe</title>
+    
+</head>
+<body>
+  
+        <div class="container">
+            <div class="title-text">
+                <div class="title login">Login</div>
+                <div class="title signup">signup </div>
+            </div>
+         
+            <div class="form-container">
+                <div class="slide-cnt">
+                    <input type="radio" name="slider" id="login" checked>
+                    <input type="radio" name="slider" id="signup">
+                    <label for="login" class="slide login">Login</label>
+                    <label for="signup" class="slide signup">Signup</label>
+                    <div class="slide-tab">
+                        
+                    </div>
+                </div>
+
+                <div class="inner">
+                 <form action="" class="login" method="POST">
+                    {% csrf_token %}
+                     <div class="field">
+                         <!-- <input type="email"  placeholder="Email Address" required><br><br> -->
+                         <input type="text" class="form-control input-sm" name="username" id="username" placeholder="username" required><br>
+                     </div>
+                     <div class="field">
+                        <!-- <input type="password" placeholder="password" required> -->
+                        <input type="password" class="form-control input-sm" name="password" id="password" placeholder="password" required><br>
+                     </div>
+                     <!-- <div class="pass-link"><a href="#">forgot password?</a></div> -->
+                     <div class="field">
+                         <!-- <button>Login</button> -->
+                         <input type="submit" value="Login">
+                         <!-- <button type="submit" class="btn btn-primary">submit</button><br> -->
+                     </div>
+                     <!-- <div class="signup-link">Not a member? <a href="#">Sign Up now</a></div> -->
+                 </form>
+
+
+                 <form action=" " class="signup">
+                    <div class="field">
+                        <input type="text" placeholder="Username" required>
+                    </div>
+                    <div class="field">
+                        <input type="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="field">
+                        <input type="password" placeholder="password" required><br><br>
+                    </div> 
+                    <div class="field">   
+                        <input type="password" placeholder="Confirm password" required><br><br>
+                    </div>
+                    <div class="field">
+                        <input type="submit" value="Signup">
+                        
+                    </div>
+                    
+                    </form>
+             
+                </div>
+            </div>
+    
+        </div>
+        
+     <script>
+         const  loginForm = document.querySelector("form.login");
+         const signupForm = document.querySelector("form.signup");
+         const loginBtn = document.querySelector("label.login");
+         const signupBtn = document.querySelector("label.signup");
+         const signupLink = document.querySelector(".signup-link a");
+        //  const loginText = document.querySelector(".title-text .login");
+        //  const signupText = document.querySelector(".title-text .signup");
+         signupBtn.onclick = (()=>{
+             loginForm.style.marginLeft  = "-50%";
+            //  loginText.style.marginLeft  = "-50%";
+         });
+         loginBtn.onclick = (()=>{
+             loginForm.style.marginLeft  = "0%";
+         });
+         signupLink.onclick = (()=>{
+             signupBtn.click();
+         });
+     </script>
+</body>
+</html>

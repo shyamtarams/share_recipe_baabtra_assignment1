@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ShareRecipe</title>
+    <link rel="icon" href="{% static 'image/fav.jpg'%}" type="image/gif" sizes="16x16">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        main {
+            min-height: 100vh;
+            /* background: linear-gradient(to right top, #65dfc9, rgb(153, 231, 245)); */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .glass {
+            display: flex;
+            min-height: 30vh;
+            width: 30%;
+            /* height: 600px;
+            width: 1200px; */
+            /* padding: 1px 1px 1px 1px; */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            /* text-align: center; */
+            backdrop-filter: blur(0.3rem);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+        
+        body {
+            align-items: center;
+            background: linear-gradient(to left, #faf9f8, #fafaf9);
+        }
+        
+        .ibox {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 10px 10px 10px;
+        }
+    </style>
+
+    <script>
+        $(function() {
+            $('#username').blur(function() {
+                username = $('#username').val()
+                console.log(username)
+                $.ajax({
+                    url: 'checkuser',
+                    type: 'get',
+                    data: {
+                        'username': username,
+                    },
+                    success: function(response) {
+                        if (response.exists) {
+                            $(':input[type="password"]').prop('disabled', false)
+                            $('#msg_unm').html('')
+                        } else {
+                            $(':input[type="password"]').prop('disabled', true)
+                            $('#msg_unm').html('username not found')
+                        }
+                        console.log(response.exists)
+                    }
+                })
+
+            })
+        });
+
+        $(document).ready(function() {
+            // console.log("wrd")
+            $('#password').blur(function() {
+                console.log("wrd")
+                if ($('#password').val().length < 5) {
+                    console.log("paas")
+                    $(':input[type="submit"]').prop('disabled', true)
+                    $('#msg_pass').html('password must be more than 5 characters').css('color', 'red')
+                } else if ($('#password').val().length > 10) {
+                    console.log("no")
+                    $(':input[type="submit"]').prop('disabled', true)
+                    $('#msg_pass').html('password must be less than 10 characters').css('color', 'red')
+                } else {
+                    $(':input[type="submit"]').prop('disabled', false)
+                    $('#msg_pass').html('paasword must be in 5-10').css('color', 'black')
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <main>
+
+        <div class="glass">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="ibox">
+                    <center>
+                        <h2>Login</h2>
+                    </center><br>
+                    <input type="text" class="form-control input-sm" name="username" id="username" placeholder="username" required><br>
+                    <label for="" id="msg_unm"></label>
+                    <input type="password" class="form-control input-sm" name="password" id="password" placeholder="password" required>
+                    <label for="" id="msg_pass">password must be 5-10 characters</label><br>
+                    <button type="submit" class="btn btn-primary">submit</button><br>
+                    <p> Don't have an account? <a href="/signup">signup</a></p>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+
+</body>
+
+</html>
