@@ -147,6 +147,19 @@
                         <span class="label label-danger">Friends</span>
                     </p>
                 </div> -->
+                
+                    {% if fnt == '' %}
+                    
+                    {% else%}
+                        <div class="alert alert-success fade in">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <p><strong>{{fnt.post.login.username}}</strong></p>
+                            has new post {{fnt.post.name}}
+                        </div>
+                    {% endif%}
+               
+
+
                {% for cmt in ncmt %}
                 <div class="alert alert-success fade in">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
@@ -237,6 +250,10 @@
                            
                             <img src="{{post.login.user_image.url}}" class="img-circle" height="35" width="35" alt="Avatar">
                             <p>{{post.login.username}}</p>
+                            
+                            {% if user.id != post.login.id %}
+                            <a href="/follow/{{post.login.id}}"><button class="btn btn-danger">visit</button></a>
+                            {% endif%}
                         </div>
                     </div>
 

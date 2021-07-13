@@ -176,6 +176,16 @@
                         </div>
                     </div>
                 </div>
+
+                {% if fnt == '' %}
+                        
+                {% else%}
+                    <div class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <p><strong>{{fnt.post.login.username}}</strong></p>
+                        has new post {{fnt.post.name}}
+                    </div>
+                {% endif%}
                
 
                     {% for cmt in ncmt %}
@@ -184,7 +194,7 @@
                                 <div class="alert alert-success fade in">
                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
                                     <p><strong>{{ cmt.user.username }}</strong></p>
-                                   commented on your post {{cmt.comment}}
+                                   commented on your post {{cmt.post.name}}
                                 </div>
                            </div>   
                         </div>

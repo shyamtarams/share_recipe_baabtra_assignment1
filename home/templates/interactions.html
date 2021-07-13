@@ -115,20 +115,27 @@
                 </div>
 
            {% for ncmt in ncmt %}
-                <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    <p><strong>{{ ncmt.user.username}}</strong></p>
-                    commented on your post {{ ncmt.post.name }}
-                </div>
-                {% endfor %}
+            {% if ncmt %}
+                    <div class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <p><strong>{{ ncmt.user.username}}</strong></p>
+                        commented on your post {{ ncmt.post.name }}
+                    </div>
+                {% else %}
+                
+                {% endif %}
+            {% endfor %}
 
             {% for nlk in nlk %}
-            
-            <div class="alert alert-success fade in">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                <p><strong>{{ nlk.user.username }}</strong></p>
-                liked your post {{ nlk.user.name }}
-            </div>
+                {%if nlk  %}
+                <div class="alert alert-success fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p><strong>{{ nlk.user.username }}</strong></p>
+                    liked your post {{ nlk.user.name }}
+                </div>
+                {% else %}
+                    
+                {%endif%}
             {% endfor %}
 
               

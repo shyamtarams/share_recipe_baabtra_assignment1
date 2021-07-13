@@ -77,6 +77,7 @@
 
 <body>
     {% include 'nav.html' %}
+
     <div class="container text-center">
         <div class="row">
 
@@ -110,44 +111,23 @@
                         <span class="label label-danger">Friends</span>
                     </p>
                 </div> -->
-                    <a href="/recipe">
-                    <div class="well">
-                        <p>HOME</p>
-                    </div></a>
-                    <a href="/postrecipe">
-                    <div class="well">
-                        <p>CREATE POST</p>
-                    </div></a>
-                    <a href="/notification">
-                    <div class="well">
-                        <p>NOTIFICATION</p>
-                    </div></a>
-                    <a href="/updateprofile">
-                    <div class="well">
-                        <p>UPDATE PROFILE</p>
-                    </div></a>
-                <!-- <div class="well">
-                    <p>TENDING</p>
-                </div> -->
-
-                <!-- <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    <p><strong>Ey!</strong></p>
-                    People are looking at your profile. Find out who.
-                </div>
-                <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    <p><strong>Ey!</strong></p>
-                    People are looking at your profile. Find out who.
-                </div>
-                <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    <p><strong>Ey!</strong></p>
-                    People are looking at your profile. Find out who.
-                </div>
-                <p><a href="#">More</a></p> -->
-                <!-- <p><a href="#">Link</a></p>
-                <p><a href="#">Link</a></p> -->
+                <a href="/recipe">
+                <div class="well">
+                    <p>HOME</p>
+                </div></a>
+                <a href="/postrecipe">
+                <div class="well">
+                    <p>CREATE POST</p>
+                </div></a>
+                <a href="/notification">
+                <div class="well">
+                    <p>NOTIFICATION</p>
+                </div></a>
+                <a href="/updateprofile">
+                <div class="well">
+                    <p>UPDATE PROFILE</p>
+                </div></a>
+               
             </div>
             <div class="col-sm-7">
 
@@ -163,37 +143,47 @@
                                     <span class="glyphicon glyphicon-thumbs-up"></span> Like
                                 </button>
                             </div> -->
-                            <form action="" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                            <div class="panel-body">
-                                
-                                <input type="text" class="form-control" name="recipename" id="postname" value="{{posts.name}}" placeholder="{{posts.name}}" ><br>
-                                
-                                <div class="drop-cate" >
-                                    <div class="form-group">
-                                        <select name="cat" value="{{cat.name}}" id=""  class="form-control">
-                                            {% for cat in cate %}
-                                            <option name="cat" value="{{cat.name}}" class="form-control" >{{cat.name}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>     
-                                </div>
-                                <input type="file" name="recipe_image" class="form-control" id="recipe_image" value="{{posts.post_image}}"><br>
-                                <textarea name="description" class="form-control"  id="" cols="20" rows="3" value="{{posts.description}}" placeholder="{{posts.description}}" ></textarea><br>
-                              post is <label for="">{{posts.access}}</label><br>
-                             
-                              
-                              
-                              {% if posts.access == 'public' %}
-                              make private <input type="radio" name="access"  value="private">
-                              {% else %}
-                            make public <input type="radio" name="access"  value="public">
-                              {% endif %}
-                              
 
-                               <br> <button type="submit" class="btn btn-primary">Update Recipe</button>
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="well">
+                                                <center>
+                                                <img src="{{fuser.user_image.url}}" class="img-circle" height="35" width="35" alt="Avatar" >
+                                                <p>{{fuser.username}}</p>
+                                                {% if uf == False %}
+                                                <button type="submit" value="{{fuser.id}}" class="btn btn-danger" name="follow">follow</button>
+                                                {% else %}
+                                                <button type="submit" value="{{fuser.id}}" class="btn btn-info" name="unfollow">unfollow</button>
+                                                {% endif %}
+                                            </center>
+                                            </div>
+                                        </div>
+                                        
+                                    <!-- <div class="col-sm-9"> -->
+                                        
+                                    <!-- </div> -->
+                                </div>
+                
+                                </div>
+                            </form>
+
+                            <!-- <div class="panel-body">
+                            <div class="drop-cate" >
+                                <div class="form-group">
+                                <select name="cat" id=""  class="form-control" onchange="this.form.submit()">
+                                    {% for cat in cat %}
+                                    <option name="cat" value="{{cat.name}}" class="form-control" >{{cat.name}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
-                        </form>
+
+                                  
+                            </div>
+                            
+                            </div> -->
 
                             <!-- dropdown bootstrap  -->
                             
@@ -213,97 +203,52 @@
                     </div>
                 </div>
                <!-- <h3>Your post</h3>  -->
-                    
+                    {% for post in posts %}
                 <!-- <div class="row" onclick="openTab('{{post.id}}');"> -->
-
                 <div class="row" >
                     
-                    <div class="col-sm-3">
+                    <!-- <div class="col-sm-3">
                         <div class="well">
                            
                             <img src="{{user.user_image.url}}" class="img-circle" height="35" width="35" alt="Avatar" >
-                            <p>{{user.username}}</p>
+                            <p>{{post.login.username}}</p>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         <div class="well">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <img src="{{posts.post_image.url}}" alt="" width="100%" height="100%">
+                                    <img src="{{post.post_image.url}}" alt="" width="100%" height="100%">
                                 </div>
                                 <div class="col-sm-9" onclick="myFunction('{{post.id}}');">
-                                    <h3>{{ posts.name}}</h3>
-                                    <p>{{posts.description}}</p>
+                                    <h3>{{ post.name}}</h3>
                                     <!-- <p>{{post.description}}</p> -->
                                     <!-- <button  onclick="myFunction('{{post.id}}');">click</button> -->
                                     
                                         
                                         </div>
                                         <div class="expand" >
-                                            <div class="containerTab" id="{{posts.id}}" style="display:none;background:none">
-                                                <!-- <span onclick="closeTab('{{post.id}}');" class="closebtn">&times;</span> -->
-                                                <!-- <span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span> -->
-                                                <!-- <span id="{{post.id}" onclick="dismiss(this.parentNode);" class="closebtn">&times;</span> -->
-                                                <!-- <span id="{{post.id}" onclick="this.parentElement.parentElement.style.display='none';" class="closebtn">&times;</span> -->
-                                                <!-- <span  onclick="myFunction();" class="closebtn">&times;</span> -->
-                                                <!-- <h2>Box 1</h2> -->
-                                                <!-- <p>Lorem ipsum dolor sit amet, te quo doctus abhorreant, et pri deleniti intellegat, te sanctus inermis ullamcorper nam. Ius error diceret deseruisse ad</p> -->
-                                                <p>{{posts.description}}</p>
-                                                 
+                                            <div class="containerTab" id="{{post.id}}" style="display:none;background:none">
                                                 
+                                                <p>{{post.description}}</p>
+                                                <!-- <a href="/delete/{{post.id}}"><button class="btn btn-primary" >delete</button></a>
+                                                <a href="/updatepost/{{post.id}}"> <button class="btn btn-primary" >edit</button></a> -->
+                                                <a href="/interactions/{{post.id}}"><button class="btn btn-info">commnet</button></a>
+                                                <button onclick="myFunction('{{post.id}}');" class="btn btn-danger ">close</button>
                                                 
-                                                <button onclick="myFunction('{{posts.id}}');" class="btn btn-danger ">close</button>
                                     </div>
                                 </div>
                                 
                             </div>
                             
                             
-                            <!-- <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p> -->
+                            
                         </div>
                     </div>
                 </div>
-                    
-                <!-- <div class="row">
-                    <div class="col-sm-3">
-                        <div class="well">
-                            <p>Bo</p>
-                            <img src="bandmember.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-                        </div>
-                    </div>
-                    <div class="col-sm-9">
-                        <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="well">
-                            <p>Jane</p>
-                            <img src="bandmember.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-                        </div>
-                    </div>
-                    <div class="col-sm-9">
-                        <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="well">
-                            <p>Anja</p>
-                            <img src="bird.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-                        </div>
-                    </div>
-                    <div class="col-sm-9">
-                        <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-                        </div>
-                    </div>
-                </div> -->
+                    {% endfor%}
+               
             </div>
             {% if trend %}
             <div class="col-sm-2 well">

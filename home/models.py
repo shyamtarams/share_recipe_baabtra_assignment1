@@ -36,10 +36,15 @@ class Post(models.Model):
     date=models.DateTimeField(auto_now_add=True)
     category=models.CharField(max_length=100)
     login=models.ForeignKey(Login,on_delete=models.CASCADE)
+    TYPE_SELECT = (
+        ('public','public'),
+        ('private','private'),
+    )
+    access=models.CharField(max_length=11,choices=TYPE_SELECT)
     # category=models.ForeignKey(Category,on_delete=models.CASCADE)
     # author=models.ForeignKey(Signup,null=False)
     def __str__(self):
-        return '{} {} {} {}'.format(self.name, self.description,self.login,self.category)
+        return '{} {} {} {} {}'.format(self.name, self.description,self.login,self.category,self.access)
 
 # class Interaction(models.Model):
 #     likes=models.IntegerField(null=True)
@@ -65,6 +70,15 @@ class Postcomment(models.Model):
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
     def __str__(self):
         return '{} {} {} {}'.format(self.comment,self.date,self.user,self.post)
+
+class Follow(models.Model):
+    user=models.ForeignKey(Login,on_delete=models.CASCADE, related_name="user who follows+")
+    following=models.ForeignKey(Login,on_delete=models.CASCADE, related_name="user who following+")
+    post=models.ForeignKey(Post,on_delete=models.CASCADE, null=True)
+    date=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return '{} {}'.format(self.user,self.following,)
+
 
 
 

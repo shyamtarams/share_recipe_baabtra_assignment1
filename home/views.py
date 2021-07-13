@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from .models import *
-from django.db.models import Q
+from django.db.models import Q,F
 from django.db.models import Count
 
 
@@ -71,22 +71,58 @@ def createpost(request):
             dsc=request.POST['description']
             print(cname)
             login=Login.objects.get(id=log_id)
-            post=Post(name=ename,description=dsc,post_image=rimg,category=cname,login=login)
+            access=request.POST['access']
+            print("acccccccess",access)
+            post=Post(name=ename,description=dsc,post_image=rimg,category=cname,login=login,access=access)
             post.save()
+            
+            # if Follow.objects.filter(user=login):
+            #     newpost=Post.objects.filter(login=id).order_by('-date')[:1]
+            #     fu=Follow.objects.filter(user=login)
+            #     fu.post=newpost
+            #     fu.save
+            # else:
+            #     pass
+
             return redirect('/postrecipe')
         except Exception as err:
             return HttpResponse(err)
 
     elif Post.objects.all():
-        print("post")
+        print("===============-")
         id= request.session['log_id']
         user=Login.objects.get(id=id)
+        if Follow.objects.filter(following=user):
+                print("===============--")
+                ps=Post.objects.filter(login=user).order_by("-date")[:1]
+                print(ps,"===-")
+                for i in ps:
+                    pn=i.id
+                print(pn)
+                print(id)
+
+                newpost=Post.objects.get(id=pn)
+                print(newpost)
+                fu=Follow.objects.get(following=user)
+                print(fu)
+
+                fu.user=fu.user
+                fu.following=fu.following
+                fu.post=newpost
+                fu.save()
+        else:
+            pass
+        print("post")
+        
         posts=Post.objects.filter(login=id).order_by('-date')
         newpost=Post.objects.filter(login=id).order_by('-date')[:1]
         if newpost:
             newpost:newpost
         else:
             newpost=''
+        
+        # fu=Follow.objects.filter(user=user)
+
         cate=Category.objects.all()
 
         if Postcomment.objects.all() or Postlike.objects.all():
@@ -106,8 +142,8 @@ def createpost(request):
             #     else:
             #         ncmt=''
             
-
-            ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            
+            ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
             print(ttlk,"ttl")
             if  ttlk:
                 lks = ttlk.values("post_id")
@@ -116,14 +152,20 @@ def createpost(request):
                 print(tlk)
             else:
                 tlk=''
-            t=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
-            if  t:
-                tr = t.values("post_id")
+                
+            tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+            if  tc:
+                tr = tc.values("post_id")
                 tr=Post.objects.get(id=tr)
                 trend=tr
-                print(trend)
             else:
-                trend=''
+                tl=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                if tl:
+                    tr = tl.values("post_id")
+                    tr=Post.objects.get(id=tr)
+                    trend=tr
+                else:
+                    trend=''
 
             posts={
                     
@@ -242,7 +284,7 @@ def recipe(request):
                         ncmt=''
                 
 
-                ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+                ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
                 print(ttlk,"ttl")
                 if  ttlk:
                     lks = ttlk.values("post_id")
@@ -296,43 +338,7 @@ def recipe(request):
                 }
             return render(request,'grid2.html',posts)
 
-            
-        #     cmt=Interaction.objects.filter(~Q(user=user),comment__isnull=False,).order_by('-date')[:5]
-        #     lk=Interaction.objects.filter(~Q(user=user),likes__isnull=False).order_by('-date')[:3]
-
-        #     t=Interaction.objects.values('post').order_by().annotate(Count('post'))[:1]
-            
-
-        #     tlk=Interaction.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=1)[:1]
         
-        #     lks = tlk.values("post_id")
-        #     tlk=Post.objects.get(id=lks)
-
-        #     vv = t.values("post_id")
-        #     trend=Post.objects.get(id=vv)
-    
-        #     posts={
-        #         'tlk':tlk,
-        #         'trend':trend,
-
-        #         'lk':lk,
-        #         'cmt':cmt,
-        #         'posts':posts,
-        #         'user':user,
-        #         'cat':cate,
-        #     }
-        #     return render(request,'grid2.html',posts)
-        # else:
-        #     cate=Category.objects.all()
-        #     id= request.session['log_id']
-        #     user=Signup.objects.get(id=id)
-        #     posts={
-        #         'cat':cate,
-        #         'user':user, 
-        #         }
-        #     return render(request,'grid2.html',posts)
-
-
     elif request.method=='POST' and 'cat' in request.POST:
         if Post.objects.all():
             cat=request.POST['cat']
@@ -343,26 +349,29 @@ def recipe(request):
             if Postlike.objects.all() or Postcomment.objects.all():
             # print(posts)
              
-                allposts=Post.objects.all()
+                allposts=Post.objects.filter(login=user)
+                ncmt=Postcomment.objects.none()
+                ntlk=Postlike.objects.none()
                 for i in allposts:
                     print(i.id)
                     print(i.login)
-                    nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                    ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                    # print("=------------=-=-",nlk)
-                    print(nlk,"============")
-                    if nlk:
-                        ntlk=nlk
-                        
+                    # nlk=Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                   
+                    if Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                        ntlk=ntlk|Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date')
                     else:
                         ntlk=''
-                    if ncmt:
-                        ncmt=ncmt
+
+                    # ncmt=Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                    print(ncmt,"c======")
+                    
+                    if Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                        ncmt=ncmt|Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date')
                     else:
                         ncmt=''
-                
+                    
 
-                ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+                ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
                 print(ttlk,"ttl")
                 if  ttlk:
                     lks = ttlk.values("post_id")
@@ -418,50 +427,95 @@ def recipe(request):
 
 
     elif Post.objects.all():
-
         id= request.session['log_id']
         user=Login.objects.get(id=id)
-        posts=Post.objects.all()
-        cate=Category.objects.all()
+        if Follow.objects.filter(user=user):
+            print("follow==============")
+            fu=Follow.objects.filter(user=user)
+            print(fu,"====-=")
+            for i in fu:
+                print(i.post,"=====-p")
+                if i.post == None:
+                    fnt=''
+                    
+                else:
+                    fnt=i
+                    print(fnt,"====i")
+        else:
+            fnt=''
+
+        print(fnt,"================-f")
+        
+
+        posts=Post.objects.filter(access='public').order_by("-date")
+        cate=Category.objects.all() 
+        ncmt=''
+        ttlk=''
+        ntlk=''
+        nlk=''
 
         if Postlike.objects.all() or Postcomment.objects.all():
             # print(posts)
-            
-            for i in posts:
+            uposts=Post.objects.filter(login=user)
+            ncmt=Postcomment.objects.none()
+            ntl=Postlike.objects.none()
+            print(type(ntl),"===nnn")
+            for i in uposts:
                 print(i.id)
                 print(i.login)
-                nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                # print("=------------=-=-",nlk)
-                print(nlk,"============")
-                if nlk:
-                    ntlk=nlk
-                    
+                # nlk=Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                   
+                if Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                    print(type(ntlk),"=============n==")
+                    ntlk=Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                    # ntlk=ntlk | ntl
                 else:
                     ntlk=''
-                if ncmt:
-                    ncmt=ncmt
+
+                # ncmt=Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                print(ncmt,"c======")
+                    
+                if Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                    ncmt=ncmt|Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
                 else:
-                    ncmt=''
+                    ncmt='' 
+
+            # print("========a==")
+            # a=Postlike.objects.filter().order_by('post_id')
+            #.order_by(F(Count('post_id')))
+            b=Postlike.objects.values('post_id').order_by('post_id').annotate(Count('post')).order_by('-post__count')[:1]
+            
+            # print(b,"==========a-=-a-=-a-=a==")
+            
+            # for i in b:
+            #     print(i)
+            # print(c,"=====c=-")
             
 
-            ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
-            print(ttlk,"ttl")
+            # ttlk=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+            ttlk=Postlike.objects.values('post').order_by('post_id').annotate(Count('post')).order_by('-post__count')[:1]
+            print(ttlk,"ttl===========----")
+           
             if  ttlk:
+                # lkc = ttlk.values("post","post__count")
                 lks = ttlk.values("post_id")
+                print(lks,"====l----")
                 ttlk=Post.objects.get(id=lks)
-                tlk=ttlk
-                print(tlk)
+                print(ttlk,"====t=l--")
+                tlk=ttlk 
             else:
                 tlk=''
 
-            tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+            tc=Postcomment.objects.values('post').order_by('post_id').annotate(Count('post')).order_by('-post__count')[:1]
+            print(tc,"==============t=c--------")
             if  tc:
                 tr = tc.values("post_id")
+                print(tr)
                 tr=Post.objects.get(id=tr)
                 trend=tr
             else:
-                tl=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                # tl=Postlike.objects.filter().order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                tl=Postlike.objects.values('post').order_by('post_id').annotate(Count('post')).order_by('-post__count')[:1]
                 if tl:
                     tr = tl.values("post_id")
                     tr=Post.objects.get(id=tr)
@@ -475,6 +529,7 @@ def recipe(request):
                     'nlk':ntlk,
                     'tlk':tlk,
                     'trend':trend,
+                    'fnt':fnt,
 
                     'posts':posts,
                     'cat':cate,
@@ -482,54 +537,9 @@ def recipe(request):
                     }
             return render(request,'grid2.html',posts)
 
-        # elif Postcomment.objects.all():
-        #     for i in posts:
-        #         print(i.id)
-        #         print(i.login)
-                # nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                # ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                # print(nlk,"============")
-                # if nlk:
-                #     ntlk=nlk
-                # else:
-                #     ntlk=''
-                # if ncmt:
-                #     ncmt=ncmt
-                # else:
-                #     ncmt=''
-            # comment notification
-            # ncmt=Postcomment.objects.filter(~Q(user=user),comment__isnull=False).order_by('-date')[:5]
-            # posts={
-                    
-            #         'ncmt':ncmt,
-                    # 'trend':trend,
-                    # 'trend':trend,
-
-            #         'posts':posts,
-            #         'cat':cate,
-            #         'user':user, 
-            #         }
-            # return render(request,'grid2.html',posts)
-
-        # elif Postlike.objects.all():
-            # like notification
-            # print("likee===================")
-            # nlk=Postlike.objects.filter(~Q(user=user)).order_by('-date')[:3]
-            # lk=Postlike.objects.values('post').order_by().annotate(Count('likes'))[:1]
-            # vv = t.values("likes")
-            # tlk=Post.objects.get(id=vv)
-            # posts={
-            #         'nlk':nlk,
-            #         'tlk':tlk,
-
-            #         'posts':posts,
-            #         'cat':cate,
-            #         'user':user, 
-            #         }
-            # return render(request,'grid2.html',posts)
-
         else:
             posts={
+                'fnt':fnt,
                 'posts':posts,
                 'cat':cate,
                 'user':user, 
@@ -582,7 +592,7 @@ def userprofile(request):
                         ncmt=''
                 
 
-                ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+                ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
                 print(ttlk,"ttl")
                 if  ttlk:
                     lks = ttlk.values("post_id")
@@ -668,7 +678,7 @@ def userprofile(request):
                         ncmt=''
                 
 
-                ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+                ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
                 print(ttlk,"ttl")
                 if  ttlk:
                     lks = ttlk.values("post_id")
@@ -750,7 +760,7 @@ def userprofile(request):
                     ncmt=''
             
 
-            ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
             print(ttlk,"ttl")
             if  ttlk:
                 lks = ttlk.values("post_id")
@@ -844,6 +854,7 @@ def updatepost(request,id):
                 dsc=request.POST['description']
                 print(dsc)
                 print("=-------------------p")
+                
 
                 # login=Login.objects.get(id=log_id)
                 post=Post.objects.get(id=id)
@@ -855,6 +866,11 @@ def updatepost(request,id):
                     post.category=cname
                 else:
                     post.category=post.category
+                access=request.POST['access']
+                if access:
+                    post.access=access
+                else:
+                    post.access=post.access
 
 
                 post.name=ename
@@ -893,7 +909,15 @@ def updatepost(request,id):
                     post.description=dsc
                 else:
                     post.description=post.description
-
+                
+                # access=request.POST['access']
+                # print(access,"===========")
+                if 'access' in request.POST:
+                    access=request.POST['access']
+                    post.access=access
+                else:
+                    post.access=post.access
+                
 
                 post.name=ename
                 # post.description=dsc
@@ -932,7 +956,7 @@ def updatepost(request,id):
                     ncmt=''
             
 
-            ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
             print(ttlk,"ttl")
             if  ttlk:
                 lks = ttlk.values("post_id")
@@ -1070,7 +1094,7 @@ def updateprofile(request):
                     ncmt=''
             
 
-            ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
             print(ttlk,"ttl")
             if  ttlk:
                 lks = ttlk.values("post_id")
@@ -1154,37 +1178,36 @@ def interactions(request,id):
             likes.save()
             return redirect('/interactions/%d'%id)
 
-    elif Postcomment.objects.filter(post=id) or Postlike.objects.filter(post=id):
-        # cusr=Postcomment.objects.get(user=)
-        print("or =================")
-        cmtp=Postcomment.objects.filter(post=id)
-        print(cmtp)
-        lkp=Postlike.objects.filter(post=id)
-        print(lkp)
+    elif Postcomment.objects.all() or Postlike.objects.all():
+        ntlk='',
+        tlk='',
+        trend='',
+        uposts=Post.objects.filter(login=user)
+        ncmt=Postcomment.objects.none()
+        ntl=Postlike.objects.none()
+        print(type(ntl),"===nnn")
+        for i in uposts:
+            print(i.id)
+            print(i.login)
+            # nlk=Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                   
+            if Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                print(type(ntlk),"=============n==")
+                ntlk=Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                # ntlk=ntlk | ntl
+            else:
+                ntlk=Postlike.objects.none()
 
+            # ncmt=Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+            print(ncmt,"c======")
+                    
+            if Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                ncmt=ncmt|Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+            else:
+                ncmt=Postcomment.objects.none()
 
-        if cmtp:
-            cmtp=Postcomment.objects.filter(post=id).order_by('-date')
-            print(cmtp)
-        else:
-            cmtp=''
-        # if lkp:
-        count_lk=Postlike.objects.filter(post=posts).count()
-        if count_lk:
-            nlk=count_lk
-            print(nlk)
-        else:
-            nlk=''
-
-
-        noti_lk=Postlike.objects.filter(~Q(user=posts.login),~Q(user=user)).order_by('-date')[:3]
-        if noti_lk:
-            ntlk=noti_lk
-        else:
-            ntlk=''
-
-        ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
-        print(ttlk,"ttl")
+        ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+        print(ttlk,"ttl===========----")
         if  ttlk:
             lks = ttlk.values("post_id")
             ttlk=Post.objects.get(id=lks)
@@ -1192,6 +1215,53 @@ def interactions(request,id):
             print(tlk)
         else:
             tlk=''
+
+
+
+
+        # cusr=Postcomment.objects.get(user=)
+        # print("or =================")
+        cmtp=Postcomment.objects.filter(post=id)
+        # print(cmtp)
+        lkp=Postlike.objects.filter(post=id)
+        # print(lkp)
+
+
+
+        
+
+
+        if cmtp:
+            cmtp=Postcomment.objects.filter(post=id).order_by('-date')
+            print(cmtp)
+        else:
+            cmtp=''
+        if lkp:
+            count_lk=Postlike.objects.filter(post=posts).count()
+            if count_lk:
+                nlk=count_lk
+                print(nlk)
+            else:
+                nlk=''
+
+
+        # noti_lk=Postlike.objects.filter(~Q(user=posts.login),~Q(user=user)).order_by('-date')[:3]
+        # if noti_lk:
+        #     ntlk=noti_lk
+        # else:
+        #     ntlk=''
+
+
+
+        # ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+        # print(ttlk,"ttl")
+        # if  ttlk:
+        #     lks = ttlk.values("post_id")
+        #     ttlk=Post.objects.get(id=lks)
+        #     tlk=ttlk
+        #     print(tlk)
+        # else:
+        #     tlk=''
 
         tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
         print("=========",tc)
@@ -1224,92 +1294,6 @@ def interactions(request,id):
 
         return render(request,'interactions.html',posts)
 
-
-        # if Interaction.objects.filter(~Q(user=posts.login),post=posts,likes__isnull=True):
-        #     print("like====================2")
-        #     likes= Interaction(likes=likes,user=user,post=posts)
-        #     likes.save()
-
-
-        # elif Interaction.objects.filter(post=posts,user=user,likes__isnull=False):
-        #     print("false")
-        #     user_id= request.session['log_id']
-        #     posts=Post.objects.get(id=id)
-        #     user=Login.objects.get(id=user_id)
-        #     if Interaction.objects.filter(likes__isnull=False):
-        #         lk=Interaction.objects.filter(post=posts,likes__isnull=False).count()
-        #         nlk=Interaction.objects.filter(~Q(user=user),likes__isnull=False).order_by('-date')[:3]
-        #         tlk=Interaction.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=1)[:1]
-        #         lks = tlk.values("post_id")
-        #         tlk=Post.objects.get(id=lks)
-        #         posts={
-        #                 # 'ncmt':ncmt,
-        #                 'nlk':nlk,
-        #                 'tlk':tlk,
-        #                 # 'trend':trend,
-
-        #                 'lk':lk,
-        #                 # 'cmt':cmt,
-        #                 'posts':posts,
-        #                 'user':user,
-        #                 'cat':cate,
-        #         }
-                    
-        #         return render(request,'interactions.html',posts)
-
-        #     elif Interaction.objects.filter(comment__isnull=False): 
-        #         cmt=Interaction.objects.filter(comment__isnull=False,post=posts).order_by('-date')
-        #         ncmt=Interaction.objects.filter(~Q(user=user),comment__isnull=False).order_by('-date')[:5]
-        #         t=Interaction.objects.values('post').order_by().annotate(Count('post'))[:1]
-        #         vv = t.values("post_id")
-        #         trend=Post.objects.get(id=vv)
-
-        #         posts={
-        #                 'ncmt':ncmt,
-        #                 # 'nlk':nlk,
-        #                 # 'tlk':tlk,
-        #                 'trend':trend,
-
-        #                 # 'lk':lk,
-        #                 'cmt':cmt,
-        #                 'posts':posts,
-        #                 'user':user,
-        #                 'cat':cate,
-        #         }
-                    
-        #         return render(request,'interactions.html',posts)
-
-        #     elif Interaction.objects.filter(comment__isnull=False,likes__isnull=False):
-        #         # likes
-        #         lk=Interaction.objects.filter(post=posts,likes__isnull=False).count()
-        #         nlk=Interaction.objects.filter(~Q(user=user),likes__isnull=False).order_by('-date')[:3]
-        #         tlk=Interaction.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=1)[:1]
-        #         lks = tlk.values("post_id")
-        #         tlk=Post.objects.get(id=lks)
-        #         # comments
-        #         cmt=Interaction.objects.filter(comment__isnull=False,post=posts).order_by('-date')
-        #         ncmt=Interaction.objects.filter(~Q(user=user),comment__isnull=False).order_by('-date')[:5]
-        #         t=Interaction.objects.values('post').order_by().annotate(Count('post'))[:1]
-        #         vv = t.values("post_id")
-        #         trend=Post.objects.get(id=vv)
-
-        #         posts={
-        #                 'ncmt':ncmt,
-        #                 'nlk':nlk,
-        #                 'tlk':tlk,
-        #                 'trend':trend,
-
-        #                 'lk':lk,
-        #                 'cmt':cmt,
-        #                 'posts':posts,
-        #                 'user':user,
-        #                 'cat':cate,
-        #         }
-                    
-        #         return render(request,'interactions.html',posts)
-
-
-
     else:
         print("else =======================")
         user_id= request.session['log_id']
@@ -1325,29 +1309,53 @@ def notification(request):
     if Post.objects.all():
         id= request.session['log_id']
         user=Login.objects.get(id=id)
+
+        if Follow.objects.filter(user=user):
+            print("follow==============")
+            fu=Follow.objects.filter(user=user)
+            print(fu,"====-=")
+            for i in fu:
+                print(i.post,"=====-p")
+                if i.post == None:
+                    fnt=''
+                    
+                else:
+                    fnt=i
+                    print(fnt,"====i")
+        else:
+            fnt=''
+
+        print(fnt,"================-f")
+        
+
+
         posts=Post.objects.all()
         cate=Category.objects.all()
+        ncmt=''
+        ttlk=''
+        tlk=''
+        ntlk=''
 
-        if Postlike.objects.all() and Postcomment.objects.all():
-            for i in posts:
+        if Postlike.objects.all() or Postcomment.objects.all():
+            uposts=Post.objects.filter(login=user)
+            print("posts========",posts)
+            
+            ncmt=Postcomment.objects.none()
+            ntlk=Postlike.objects.none()
+            for i in uposts:
                 print(i.id)
                 print(i.login)
-                nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                
-                ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
-                print(ncmt)
-                print(nlk,"============")
-                if nlk:
-                    ntlk=nlk
+                if Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                    ntlk=ntlk|Postlike.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
+                    print(ntlk,"l=================l=p")
                 else:
-                    ntlk=''
-                if ncmt:
-                    ncmt=ncmt
+                    ntlk=Postlike.objects.none()
+                if Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date'):
+                    ncmt=ncmt|Postcomment.objects.filter(~Q(user=user),post=i.id).order_by('-date')[:3]
                 else:
-                    ncmt=''
-            
+                    ncmt=Postlike.objects.none()
 
-            ttlk=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
             print(ttlk,"ttl")
             if  ttlk:
                 lks = ttlk.values("post_id")
@@ -1356,16 +1364,30 @@ def notification(request):
                 print(tlk)
             else:
                 tlk=''
-            t=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
-            if  t:
-                tr = t.values("post_id")
+            # t=Postlike.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            # if  t:
+            #     tr = t.values("post_id")
+            #     tr=Post.objects.get(id=tr)
+            #     trend=tr
+            #     print(trend)
+            # else:
+            #     trend=''
+            tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+            if  tc:
+                tr = tc.values("post_id")
                 tr=Post.objects.get(id=tr)
                 trend=tr
-                print(trend)
             else:
-                trend=''
+                tl=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                if tl:
+                    tr = tl.values("post_id")
+                    tr=Post.objects.get(id=tr)
+                    trend=tr
+                else:
+                    trend=''
 
             posts={
+                    'fnt':fnt,
                     'ncmt':ncmt,
                     'nlk':ntlk,
                     'tlk':tlk,
@@ -1378,6 +1400,7 @@ def notification(request):
             return render(request,'notification.html',posts)
         else:
             posts={
+                'fnt':fnt,
                 'user':user,
                 'posts':posts,
             }
@@ -1390,58 +1413,465 @@ def notification(request):
         }
         return render(request,'notification.html',posts)
 
+def topten(request):
+    if request.method=='POST' and 'search' in request.POST:
+        if Post.objects.all():
+            s=request.POST['search']
+            posts = Post.objects.filter(name__icontains=s)
+            id= request.session['log_id']
+            user=Login.objects.get(id=id)
+            cate=Category.objects.all()
+            if Postlike.objects.all() or Postcomment.objects.all():
+            # print(posts)
+             
+                allposts=Post.objects.all()
+                for i in allposts:
+                    print(i.id)
+                    print(i.login)
+                    nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                    ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                    # print("=------------=-=-",nlk)
+                    print(nlk,"============")
+                    if nlk:
+                        ntlk=nlk
+                        
+                    else:
+                        ntlk=''
+                    if ncmt:
+                        ncmt=ncmt
+                    else:
+                        ncmt=''
+                
+
+                ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+                print(ttlk,"ttl")
+                if  ttlk:
+                    lks = ttlk.values("post_id")
+                    ttlk=Post.objects.get(id=lks)
+                    tlk=ttlk
+                    print(tlk)
+                else:
+                    tlk=''
+
+                tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                if  tc:
+                    tr = tc.values("post_id")
+                    tr=Post.objects.get(id=tr)
+                    trend=tr
+                else:
+                    tl=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                    if tl:
+                        tr = tl.values("post_id")
+                        tr=Post.objects.get(id=tr)
+                        trend=tr
+                    else:
+                        trend=''
+
+                posts={
+                        
+                        'ncmt':ncmt,
+                        'nlk':ntlk,
+                        'tlk':tlk,
+                        'trend':trend,
+
+                        'posts':posts,
+                        'cat':cate,
+                        'user':user, 
+                        }
+                return render(request,'account.html',posts)
+
+            else:
+                posts={
+                'cat':cate,
+                'user':user, 
+                'posts':posts,
+                }
+                return render(request,'account.html',posts)
+        else:
+            cate=Category.objects.all()
+            id= request.session['log_id']
+            user=Login.objects.get(id=id)
+            posts={
+                'cat':cate,
+                'user':user, 
+                }
+            return render(request,'account.html',posts)
+
+
+    if request.method=='POST' and 'cat' in request.POST:
+        if Post.objects.all():
+            cat=request.POST['cat']
+            print(cat,"===============")
+            posts = Post.objects.filter(category=cat)
+            print(posts)
+            id= request.session['log_id']
+            user=Login.objects.get(id=id)
+            cate=Category.objects.all()
+            if Postlike.objects.all() or Postcomment.objects.all():
+            
+             
+                allposts=Post.objects.all()
+                for i in allposts:
+                    print(i.id)
+                    print(i.login)
+                    nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                    ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                    # print("=------------=-=-",nlk)
+                    print(nlk,"============")
+                    if nlk:
+                        ntlk=nlk
+                        
+                    else:
+                        ntlk=''
+                    if ncmt:
+                        ncmt=ncmt
+                    else:
+                        ncmt=''
+                
+
+                ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+                print(ttlk,"ttl")
+                if  ttlk:
+                    lks = ttlk.values("post_id")
+                    ttlk=Post.objects.get(id=lks)
+                    tlk=ttlk
+                    print(tlk)
+                else:
+                    tlk=''
+
+                tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                if  tc:
+                    tr = tc.values("post_id")
+                    tr=Post.objects.get(id=tr)
+                    trend=tr
+                else:
+                    tl=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                    if tl:
+                        tr = tl.values("post_id")
+                        tr=Post.objects.get(id=tr)
+                        trend=tr
+                    else:
+                        trend=''
+
+                posts={
+                        
+                        'ncmt':ncmt,
+                        'nlk':ntlk,
+                        'tlk':tlk,
+                        'trend':trend,
+
+                        'posts':posts,
+                        'cat':cate,
+                        'user':user, 
+                        }
+                return render(request,'account.html',posts)
+
+            else:
+                posts={
+                'cat':cate,
+                'user':user, 
+                'posts':posts,
+                }
+                return render(request,'account.html',posts)
+        else:
+            cate=Category.objects.all()
+            id= request.session['log_id']
+            user=Login.objects.get(id=id)
+            posts={
+                'cat':cate,
+                'user':user, 
+                }
+            return render(request,'account.html',posts)
+
+
+
+    id= request.session['log_id']
+    user=Login.objects.get(id=id)
+    if Post.objects.all():
+        # posts=Postcomment.objects.filter().annotate(comments=Count('post')).order_by('comments')
+        ps = Post.objects.none()
+        posts=Postcomment.objects.filter().order_by('post').annotate(Count('post')).filter(post__count__gt=0)
+        
+        for i in posts:
+            print(i.post)
+            ps =ps|Post.objects.filter(id=i.post_id).distinct("id")
+
+
+        posts=ps
+        print(posts,"pp-----------------")
+        # posts=Postcomment.objects.values().annotate(total=Count('post')).order_by()
+        # k=Postcomment.objects.all().order_by()
+        # print(k,"______________------")
+        # print(t,'000000000000000')
     
-    # if Interaction.objects.all():
-    #     id= request.session['log_id']
-    #     user=Login.objects.get(id=id)
+        # print(type(posts))
+        # print(posts)
+        # for i in posts:
+        #     print(i.post_id)
+        #     po=Post.objects.filter(id=i.post_id)
+        #     print(po,"-------------------------------")
+        #     if po:
+        #         posts=po
+        #     else:
+        #         posts=''
+        # print(posts)
+        # for i in po:
+        #     print(i.id,"----------")
+           
+                
+        
+        
+        
+       
+        # lks = posts.values("post")
+        # print(lks)
+        # for i in lks:
+            # print(i.post.name,"nnnnnnnnnnnnnnnn============")
+        #     print(i.get('post'))
+        #     pid=i.get('post')
+        #     vl=Post.objects.filter(id=pid)
+        #     if vl:
+        #         tt=vl
+        #     else:
+        #         tt=''
 
-    #     posts=Post.objects.filter(login=id)
-    #     cate=Category.objects.all()
+        # print(tt,"10101010")
 
-    #     cmt=Interaction.objects.filter(~Q(user=user),comment__isnull=False).order_by('-date')
-    #     lk=Interaction.objects.filter(~Q(user=user),likes__isnull=False).order_by('-date')
+        # print("--==-==-=--===========--")
+        cate=Category.objects.all()
+        if Postlike.objects.all() or Postcomment.objects.all():
+            allposts=Post.objects.all()
+            
+            for i in allposts:
+                print(i.id)
+                print(i.login)
+                nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                # print("=------------=-=-",nlk)
+                print(nlk,"============")
+                if nlk:
+                    ntlk=nlk
+                    
+                else:
+                    ntlk=''
+                if ncmt:
+                    ncmt=ncmt
+                else:
+                    ncmt=''
+            
 
-    #     t=Interaction.objects.values('post').order_by().annotate(Count('post'))[:1]
+            ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            print(ttlk,"ttl")
+            if  ttlk:
+                lks = ttlk.values("post_id")
+                ttlk=Post.objects.get(id=lks)
+                tlk=ttlk
+                print(tlk)
+            else:
+                tlk=''
+
+            tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+            if  tc:
+                tr = tc.values("post_id")
+                tr=Post.objects.get(id=tr)
+                trend=tr
+            else:
+                tl=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                if tl:
+                    tr = tl.values("post_id")
+                    tr=Post.objects.get(id=tr)
+                    trend=tr
+                else:
+                    trend=''
+
+            posts={
+                    
+                    'ncmt':ncmt,
+                    'nlk':ntlk,
+                    'tlk':tlk,
+                    'trend':trend,
+
+                    'posts':posts,
+                    'cat':cate,
+                    'user':user, 
+                    }
+            return render(request,'topten.html',posts) 
+
+
+        # if Interaction.objects.all():
+        #     cmt=Interaction.objects.filter(~Q(user=user),comment__isnull=False).order_by('-date')[:5]
+        #     lk=Interaction.objects.filter(~Q(user=user),likes__isnull=False).order_by('-date')[:3]
+
+        #     t=Interaction.objects.values('post').order_by().annotate(Count('post'))[:1]
+
+            
+        #     tlk=Interaction.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=1)[:1]
+                
+        #     lks = tlk.values("post_id")
+        #     tlk=Post.objects.get(id=lks)
+
+        #     vv = t.values("post_id")
+        #     trend=Post.objects.get(id=vv)
+
+        #     posts={
+        #         'tlk':tlk,
+        #         'trend':trend,
+        #         'lk':lk,
+        #         'cmt':cmt,
+        #         'posts':posts,
+        #         'user':user,
+        #         'cat':cate,
+        #     }
+        #     return render(request,'account.html',posts)
+        else:
+            cate=Category.objects.all()
+            id= request.session['log_id']
+            user=Signup.objects.get(id=id)
+            posts=Post.objects.all()
+            posts={
+                'posts':posts,
+                'cat':cate,
+                'user':user, 
+                }
+            return render(request,'account.html',posts)
+    else:
+        posts={
+                'user':user, 
+               }
+        return render(request,'account.html',posts)   
+
+
+def follow(request,id):
+    log_id= request.session['log_id']
+    user=Login.objects.get(id=log_id)
+    follouser=Login.objects.get(id=id)
+
+    if request.method=="POST" and "follow" in request.POST:
+        following=request.POST["follow"]
+        following=Login.objects.get(id=following)
+        print(following)
+        print(user)
+        fll=Follow(user=user,following=following)
+        fll.save()
+    else:
+        pass
+
+    if request.method=="POST" and "unfollow" in request.POST:
+        following=request.POST["unfollow"]
+        print(following,"============f")
+        Follow.objects.get(following=following,user=user).delete()
+        return redirect("/follow/%d"%id)
+    else:
+        pass
+    
+    
+    if Post.objects.all():
+        print("follow",id)
+        posts=Post.objects.filter(login=id)
+        print("follow ",posts)
+        cate=Category.objects.all()
+
+        if Follow.objects.filter(user=user):
+            fll=Follow.objects.get(user=user) 
+            print(follouser.id)
+            print(fll.following.id)
+            
+            if follouser.id == fll.following.id:
+                uf=True   
+            else:
+                uf=False
+            print(uf)
+        
+        else:
+            print("no foloow =============")
+            uf=False
+            follouser=Login.objects.get(id=id)
+        
+        
+            
+        if Postlike.objects.all() or Postcomment.objects.all():
+            allposts=Post.objects.all()
+            
+            for i in allposts:
+                print(i.id)
+                print(i.login)
+                nlk=Postlike.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                ncmt=Postcomment.objects.filter(~Q(user=i.login),~Q(user=user)).order_by('-date')[:3]
+                # print("=------------=-=-",nlk)
+                print(nlk,"============")
+                if nlk:
+                    ntlk=nlk
+                else:
+                    ntlk=''
+                if ncmt:
+                    ncmt=ncmt
+                else:
+                    ncmt=''
+            
+
+            ttlk=Postlike.objects.filter().order_by().annotate(Count('likes')).filter(likes__count__gt=0)[:1]
+            print(ttlk,"ttl")
+            if  ttlk:
+                lks = ttlk.values("post_id")
+                ttlk=Post.objects.get(id=lks)
+                tlk=ttlk
+                print(tlk)
+            else:
+                tlk=''
+
+            tc=Postcomment.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+            if  tc:
+                tr = tc.values("post_id")
+                tr=Post.objects.get(id=tr)
+                trend=tr
+            else:
+                tl=Postlike.objects.values('post').order_by().annotate(Count('post')).filter(post__count__gt=0)[:1]
+                if tl:
+                    tr = tl.values("post_id")
+                    tr=Post.objects.get(id=tr)
+                    trend=tr
+                else:
+                    trend=''
+
+            posts={
+                    'uf':uf,
+                    'fuser':follouser,
+                    'ncmt':ncmt,
+                    'nlk':ntlk,
+                    'tlk':tlk,
+                    'trend':trend,
+
+                    'posts':posts,
+                    'cat':cate,
+                    'user':user, 
+                    }
+            return render(request,'follow.html',posts) 
+
 
         
-    #     # tlk=Interaction.objects.values('post').order_by().annotate(Count('likes'))
-    #     tlk=Interaction.objects.values('post').order_by().annotate(Count('likes')).filter(likes__count__gt=1)[:1]
+        else:
+            cate=Category.objects.all()
+            id= request.session['log_id']
+            user=Signup.objects.get(id=id)
+            # posts=Post.objects.all()
+            posts={
+                'uf':uf,
+                'fuser':follouser,
+                'posts':posts,
+                # 'cat':cate,
+                'user':user, 
+                }
+            return render(request,'follow.html',posts)
+    else:
+        posts={
+                'fuser':follouser,
+                'user':user, 
+               }
+        return render(request,'follow.html',posts)    
+
+    
+
         
-        
-    #     lks = tlk.values("post_id")
-    #     tlk=Post.objects.get(id=lks)
-
-    
-
-    #     vv = t.values("post_id")
-    #     trend=Post.objects.get(id=vv)
-    
-    #     posts={
-    #         'tlk':tlk,
-    #         'trend':trend,
-    #         'lk':lk,
-    #         'cmt':cmt,
-    #         'posts':posts,
-    #         'user':user,
-    #         'cat':cate,
-    #     }
-    #     return render(request,'notification.html',posts)
-    # else:
-    #     id= request.session['log_id']
-    #     user=Login.objects.get(id=id)
-    #     posts={
-    #             'user':user, 
-    #         }
-    #     return render(request,'notification.html',posts)
-
-
-    
- 
-
-
-
-
-
 
 
     

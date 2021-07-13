@@ -16,5 +16,7 @@ urlpatterns = [
     path('updateprofile',views.updateprofile),
     path('interactions/<int:id>',views.interactions),
     path('notification',views.notification),
+    path('topten',views.topten),
+    path('follow/<int:id>',views.follow),
     
 ]
