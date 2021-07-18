@@ -18,5 +18,6 @@ urlpatterns = [
     path('notification',views.notification),
     path('topten',views.topten),
     path('follow/<int:id>',views.follow),
+    path('followers',views.followers),
     
 ]

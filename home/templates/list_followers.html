@@ -121,161 +121,163 @@
                 </div></a>
                 <a href="/notification">
                 <div class="well">
-                    <p>NOTIFICATION</p>
+                    <p>NOTI
+                        FICATION</p>
                 </div></a>
                 <a href="/updateprofile">
                 <div class="well">
                     <p>UPDATE PROFILE</p>
                 </div></a>
-               
+                <!-- <div class="well">
+                    <p>TENDING</p>
+                </div> -->
+
+                <!-- <div class="alert alert-success fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p><strong>Ey!</strong></p>
+                    People are looking at your profile. Find out who.
+                </div>
+                <div class="alert alert-success fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p><strong>Ey!</strong></p>
+                    People are looking at your profile. Find out who.
+                </div>
+                <div class="alert alert-success fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <p><strong>Ey!</strong></p>
+                    People are looking at your profile. Find out who.
+                </div>
+                <p><a href="#">More</a></p> -->
+                <!-- <p><a href="#">Link</a></p>
+                <p><a href="#">Link</a></p> -->
             </div>
             <div class="col-sm-7">
 
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="panel panel-default text-left">
-                            <!-- <div class="panel-body">
-                                <p contenteditable="true">Status: Feeling Blue</p>
-                                <button type="button" class="btn btn-default btn-sm">
-                                    <span class="glyphicon glyphicon-thumbs-up"></span> Like
-                                </button>
-                                <button type="button" class="btn btn-default btn-sm">
-                                    <span class="glyphicon glyphicon-thumbs-up"></span> Like
-                                </button>
-                            </div> -->
-
-                            <form action="" method="POST">
-                                {% csrf_token %}
-                                <div class="panel-body">
-                                    <div class="drop-cate" >
-                                        <div class="form-group">
-                                            <select name="cat" id=""  class="form-control" onchange="this.form.submit()">
-                                                {% for cat in cat %}
-                                                <option name="cat" value="{{cat.name}}" class="form-control" >{{cat.name}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-
+                            <h3><p><center> Followers</center></p></h3>
                             <!-- <div class="panel-body">
                             <div class="drop-cate" >
-                                <div class="form-group">
-                                <select name="cat" id=""  class="form-control" onchange="this.form.submit()">
+                                <div class="form-group"> -->
+                                    
+                                <!-- <select name="cat" id=""  class="form-control">
                                     {% for cat in cat %}
                                     <option name="cat" value="{{cat.name}}" class="form-control" >{{cat.name}}</option>
                                     {% endfor %}
-                                </select>
-                            </div>
+                                </select> -->
+                               <!-- </div>
 
-                                  
+                                   
                             </div>
                             
                             </div> -->
 
-                            <!-- dropdown bootstrap  -->
-                            
-                            <!-- <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Dropdown button
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    {% for cat in cat %}
-                                  <a class="dropdown-item" href="#">{{cat.name}}</a> -->
-                                  <!-- <a class="dropdown-item" href="#">Another action</a>
-                                  <a class="dropdown-item" href="#">Something else here</a> -->
-                                  <!-- {% endfor %}
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>
-               <!-- <h3>Your post</h3>  -->
-                    {% for p in posts %}
-                <!-- <div class="row" onclick="openTab('{{post.id}}');"> -->
-                <div class="row" >
+                {% for fll in fll %}
+                <div class="well">
+                    <div class="row">
+                        <!-- <div class="col-sm-3">
+                        
+                        </div> -->
+                        <div class="col-sm-6">
+                        <img src="{{fll.user.user_image.url}}" class="img-circle" height="65" width="65" alt="Avatar">
+                        <h5>{{fll.user.username}}</h5>
+                        </div>
+                        <div class="col-sm-3"><br>
+                        <a href="/follow/{{fll.user.id}}"><button class="btn btn-info">view</button></a>
+                        </div>
+                    </div>
+                  
                     
-                    <div class="col-sm-3">
-                        <div class="well">
-                           
-                            <img src="{{user.user_image.url}}" class="img-circle" height="35" width="35" alt="Avatar" >
-                            <p>{{p.login.username}}</p>
-                        </div>
-                    </div>
+                </div>
+                {% endfor%}
 
-                    <div class="col-sm-9">
-                        <div class="well">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <img src="{{ p.post_image.url }}" alt="" width="100%" height="100%">
-                                </div>
-                                <div class="col-sm-9" onclick="myFunction('{{p.id}}');">
-                                    <h3>{{ p.name}}</h3>
-                                    <!-- <p>{{post.description}}</p> -->
-                                    <!-- <button  onclick="myFunction('{{post.id}}');">click</button> -->
-                                    
-                                        
-                                        </div>
-                                        <div class="expand" >
-                                            <div class="containerTab" id="{{p.id}}" style="display:none;background:none">
-                                                
-                                                <p>{{p.description}}</p>
-                                                
-                                                <a href="/interactions/{{p.id}}"> <button class="btn btn-primary" >view</button></a>
-                                                <button onclick="myFunction('{{p.id}}');" class="btn btn-danger ">close</button>
-                                                
-                                    </div>
-                                </div>
-                                
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default text-left">
+                            <h3><p><center> Following</center></p></h3>
+                            
+
+                        </div>
+                    </div>
+                </div>
+                {% for flr in flr %}
+                    <div class="well">
+                        <div class="row">
+                            <!-- <div class="col-sm-3">
+                            
+                            </div> -->
+                            <div class="col-sm-6">
+                            <img src="{{flr.following.user_image.url}}" class="img-circle" height="65" width="65" alt="Avatar">
+                            <h5>{{flr.following.username}}</h5>
                             </div>
-                            
-                            
-                            <!-- <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p> -->
+                            <div class="col-sm-3"><br>
+                            <a href="/follow/{{flr.following.id}}"><button class="btn btn-info">view</button></a>
+                            </div>
                         </div>
+                    
+                        
                     </div>
-                </div>
+                {% endfor%}
+                
+                {% for nfl in nf %}
+                {% if nf == '' %}
+                        
+                {% else%}
+                    <div class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                            <span class="glyphicon glyphicon-user"></span>
+                        </a>
+                        <!-- <p><strong>{{nf.post.login.username}}</strong></p> -->
+                        You have a new follower <strong>{{ nfl.user.username }}</strong>
+                    </div>
+                {% endif%}
+                {% endfor %}
+
+                <!-- {% if fnt == '' %}
+                        
+                {% else%}
+                    <div class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <p><strong>{{fnt.post.login.username}}</strong></p>
+                        has new post {{fnt.post.name}}
+                    </div>
+                {% endif%} -->
+               
+
+                    {% for cmt in ncmt %}
+                        <div class="row" >
+                            <div class="col-sm-12">
+                                <div class="alert alert-success fade in">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                                        <span class="glyphicon glyphicon-comment"></span>
+                                    </a>
+                                    <p><strong>{{ cmt.user.username }}</strong></p>
+                                   commented on your post {{cmt.post.name}}
+                                </div>
+                           </div>   
+                        </div>
                     {% endfor%}
-                <!-- <div class="row">
-                    <div class="col-sm-3">
-                        <div class="well">
-                            <p>Bo</p>
-                            <img src="bandmember.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-                        </div>
+                    
+                    {% for lk in nlk %}
+                    <div class="row" >
+                        <div class="col-sm-12">
+                            <div class="alert alert-success fade in">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                                    <span class="glyphicon glyphicon-heart"></span>
+                                </a>
+                                <p><strong>{{ lk.user.username }}</strong></p>
+                                liked your post {{ lk.post.name}}
+                            </div>
+                       </div>   
                     </div>
-                    <div class="col-sm-9">
-                        <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="well">
-                            <p>Jane</p>
-                            <img src="bandmember.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-                        </div>
-                    </div>
-                    <div class="col-sm-9">
-                        <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="well">
-                            <p>Anja</p>
-                            <img src="bird.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-                        </div>
-                    </div>
-                    <div class="col-sm-9">
-                        <div class="well">
-                            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-                        </div>
-                    </div>
-                </div> -->
+                {% endfor%}
+                
             </div>
+            
             {% if trend %}
             <div class="col-sm-2 well">
                 <div class="thumbnail">
@@ -303,7 +305,6 @@
                         <p>TOP 10 POST</p>
                     </div>
                 </a>
-               
                 <a href="/followers">
                     <div class="well">
                         <p>YOUR CIRCLE</p>
@@ -332,6 +333,7 @@
                 <!-- <div class="well">
                     <p>TENDING</p>
                 </div> -->
+
                 <a href="/topten">
                     <div class="well">
                         <p>TOP 10 POST</p>

@@ -147,35 +147,62 @@
                         <span class="label label-danger">Friends</span>
                     </p>
                 </div> -->
+
+                {% for nfl in nf %}
+                {% if nf == '' %}
+                        
+                {% else%}
+                    <div class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                            <span class="glyphicon glyphicon-user"></span>
+                        </a>
+                        <!-- <p><strong>{{nf.post.login.username}}</strong></p> -->
+                        You have a new follower <strong>{{ nfl.user.username }}</strong>
+                    </div>
+                {% endif%}
+                {% endfor %}
                 
-                    {% if fnt == '' %}
-                    
-                    {% else%}
-                        <div class="alert alert-success fade in">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                            <p><strong>{{fnt.post.login.username}}</strong></p>
-                            has new post {{fnt.post.name}}
-                        </div>
-                    {% endif%}
-               
+                {% if fnt.post %}
+                    <div class="alert alert-success fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                            <span class="glyphicon glyphicon-envelope"></span>
+                        </a>
+                        <p><strong>{{fnt.post.login.username}}</strong></p>
+                        has new post {{fnt.post.name}}
+                    </div>
+                {% else%}
+                        
+                {% endif%}
 
+               <script>
+                   function nt(){
+                       alert()
+                   }
+               </script>
 
+              
                {% for cmt in ncmt %}
-                <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+              
+                <div class="alert alert-success fade in" >
+                    <a href="" class="close" data-dismiss="alert" aria-label="close">
+                        <span class="glyphicon glyphicon-comment"></span>
+                    </a>
                     <p><strong>{{cmt.user.username}}</strong></p>
-                    commented on {{cmt.post.name}}
-                    
+                    commented on {{cmt.post.name}}<br>
+                    <a href="/interactions/{{cmt.post.id}}">view</a>
                 </div>
-                
+           
                 {% endfor %}
 
                 {% for lk in nlk %}
                 <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                        <span class="glyphicon glyphicon-heart"></span>
+                    </a>
                     <p><strong></strong></p>
                     
                     {{ lk.user.username}} has liked your post {{lk.post.name}}
+                    <a href="/interactions/{{lk.post.id}}">view</a>
                 </div>
                 {% endfor %}
 
@@ -367,13 +394,17 @@
                 <!-- <div class="well">
                     <p>TENDING</p>
                 </div> -->
-                <div class="well">
-                    <p>TOP 10 POST</p>
-                </div>
+                <a href="/topten">
+                    <div class="well">
+                        <p>TOP 10 POST</p>
+                    </div>
+                </a>
                
-                <div class="well">
-                    <p>YOUR CIRCLE</p>
-                </div>
+                <a href="/followers">
+                    <div class="well">
+                        <p>YOUR CIRCLE</p>
+                    </div>
+                </a>
             </div>
             {% else%}
             <div class="col-sm-2 well">
@@ -397,13 +428,17 @@
                 <!-- <div class="well">
                     <p>TENDING</p>
                 </div> -->
-                <div class="well">
-                    <p>TOP 10 POST</p>
-                </div>
+                <a href="/topten">
+                    <div class="well">
+                        <p>TOP 10 POST</p>
+                    </div>
+                </a>
                
-                <div class="well">
-                    <p>YOUR CIRCLE</p>
-                </div>
+                <a href="/followers">
+                    <div class="well">
+                        <p>YOUR CIRCLE</p>
+                    </div>
+                </a>
             </div>
             {% endif %}
         </div>

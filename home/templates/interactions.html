@@ -113,33 +113,28 @@
                     </div>
                     <!-- <p><a href="#">{{user.username}}</a></p> -->
                 </div>
+                <a href="/recipe">
+                    <div class="well">
+                        <p>HOME</p>
+                    </div></a>
+                    <a href="/postrecipe">
+                    <div class="well">
+                        <p>CREATE POST</p>
+                    </div></a>
+                    <a href="/notification">
+                    <div class="well">
+                        <p>NOTI
+                            FICATION</p>
+                    </div></a>
+                    <a href="/updateprofile">
+                    <div class="well">
+                        <p>UPDATE PROFILE</p>
+                    </div></a>
 
-           {% for ncmt in ncmt %}
-            {% if ncmt %}
-                    <div class="alert alert-success fade in">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                        <p><strong>{{ ncmt.user.username}}</strong></p>
-                        commented on your post {{ ncmt.post.name }}
-                    </div>
-                {% else %}
-                
-                {% endif %}
-            {% endfor %}
-
-            {% for nlk in nlk %}
-                {%if nlk  %}
-                <div class="alert alert-success fade in">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    <p><strong>{{ nlk.user.username }}</strong></p>
-                    liked your post {{ nlk.user.name }}
-                </div>
-                {% else %}
-                    
-                {%endif%}
-            {% endfor %}
+           
 
               
-                <p><a href="/notification">More</a></p>
+                <!-- <p><a href="/notification">More</a></p> -->
                
             </div>
             <div class="col-sm-7">
@@ -260,13 +255,17 @@
                                 <!-- <div class="well">
                                     <p>TENDING</p>
                                 </div> -->
-                                <div class="well">
-                                    <p>TOP 10 POST</p>
-                                </div>
+                                <a href="/topten">
+                                    <div class="well">
+                                        <p>TOP 10 POST</p>
+                                    </div>
+                                </a>
                                
-                                <div class="well">
-                                    <p>YOUR CIRCLE</p>
-                                </div>
+                                <a href="/followers">
+                                    <div class="well">
+                                        <p>YOUR CIRCLE</p>
+                                    </div>
+                                </a>
                             </div>
                             {% else%}
                             <div class="col-sm-2 well">
@@ -290,13 +289,17 @@
                                 <!-- <div class="well">
                                     <p>TENDING</p>
                                 </div> -->
-                                <div class="well">
-                                    <p>TOP 10 POST</p>
-                                </div>
+                                <a href="/topten">
+                                    <div class="well">
+                                        <p>TOP 10 POST</p>
+                                    </div>
+                                </a>
                                
-                                <div class="well">
-                                    <p>YOUR CIRCLE</p>
-                                </div>
+                                <a href="/followers">
+                                    <div class="well">
+                                        <p>YOUR CIRCLE</p>
+                                    </div>
+                                </a>
                             </div>
                             {% endif %}
         </div>
