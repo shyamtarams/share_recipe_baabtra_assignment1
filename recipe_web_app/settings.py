@@ -82,7 +82,7 @@ DATABASES = {
     # }
      'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'recipe',
+        'NAME': 'recipe_v2',
         'USER':'postgres', 
         'PASSWORD': 'pg@shyam535',
         'HOST': '127.0.0.1', 
